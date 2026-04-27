@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Mission Résistance</title>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+body {
+    font-family: Arial;
+    background: url('https://images.unsplash.com/photo-1549887534-3dbd5a6c8f9b') no-repeat center;
+    background-size: cover;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+.container {
+    max-width: 700px;
+    margin: auto;
+    background: rgba(0,0,0,0.8);
+    padding: 20px;
+    border-radius: 10px;
+}
+button {
+    display: block;
+    margin: 10px auto;
+    padding: 12px;
+    background: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 80%;
+}
+button:hover {
+    background: #555;
+}
+#result {
+    font-size: 24px;
+    margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h1>🕵️ Mission Résistance</h1>
+<p>Réponds correctement pour obtenir le code secret.</p>
+
+<div id="quiz"></div>
+<div id="result"></div>
+</div>
+
+<!-- Sons -->
+<audio id="goodSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+<audio id="badSound" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
+<audio id="bgMusic" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" loop></audio>
+
+<script>
+
+document.body.addEventListener("click", () => {
+    document.getElementById("bgMusic").play();
+}, { once: true });
+
+const questions = [
+{
+q: "Dans quelle guerre se déroule l’histoire ?",
+a: ["1914-1918", "1939-1945", "Moyen Âge"],
+correct: 1, chiffre: 0
+},
+{
+q: "Nom du réseau des enfants ?",
+a: ["Le Lynx", "Les Robinsons", "Les Faucons"],
+correct: 1, chiffre: 5
+},
+{
+q: "Prénom de la fille ?",
+a: ["Marie", "Lisa", "Jeanne"],
+correct: 1, chiffre: 6
+},
+{
+q: "Changement après sabotage ?",
+a: ["Ils se révoltent", "Regards pleins de colère", "Ils fuient"],
+correct: 1, chiffre: 0
+},
+{
+q: "Première action de résistance ?",
+a: ["Péniche", "Bonhomme de neige", "Fonderie"],
+correct: 1, chiffre: 0
+},
+{
+q: "Date appel de Gaulle ?",
+a: ["18 avril", "18 juin", "25 juin"],
+correct: 1, chiffre: 6
+}
+];
+
+let i = 0;
+let code = "";
+
+function showQ(){
+    let q = questions[i];
+    let html = "<h2>"+q.q+"</h2>";
+    q.a.forEach((rep, index)=>{
+        html += `<button onclick="answer(${index})">${rep}</button>`;
+    });
+    document.getElementById("quiz").innerHTML = html;
+}
+
+function answer(index){
+    if(index === questions[i].correct){
+        document.getElementById("goodSound").play();
+        code += questions[i].chiffre;
+    } else {
+        document.getElementById("badSound").play();
+        code += "X";
+    }
+
+    i++;
+
+    if(i < questions.length){
+        setTimeout(showQ, 500);
+    } else {
+        document.getElementById("quiz").innerHTML = "";
+        document.getElementById("result").innerHTML =
+        "🔐 Code : " + code;
+
+        confetti({
+            particleCount: 150,
+            spread: 70
+        });
+    }
+}
+
+showQ();
+
+</script>
+
+</body>
+</html>
