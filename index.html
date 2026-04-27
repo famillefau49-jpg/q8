@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <title>Mission Résistance</title>
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <style>
 body {
     margin: 0;
@@ -16,19 +18,20 @@ body {
 .card {
     background: #f2e2b8;
     color: black;
-    max-width: 600px;
+    max-width: 700px;
     margin: 40px auto;
-    padding: 25px;
+    padding: 30px;
     border-radius: 10px;
 }
 
 .answer {
     background: #333;
     color: white;
-    padding: 18px;
-    margin: 10px 0;
+    padding: 20px;
+    margin: 12px 0;
     cursor: pointer;
-    font-size: 22px;
+    font-size: 20px;
+    border-radius: 6px;
 }
 
 .answer:hover {
@@ -38,6 +41,7 @@ body {
 #code {
     margin-top: 30px;
     font-size: 30px;
+    letter-spacing: 10px;
 }
 </style>
 </head>
@@ -53,29 +57,53 @@ body {
 
 <div id="code"></div>
 
-<!-- sons intégrés (fiables) -->
-<audio id="good" src="data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA="></audio>
-<audio id="bad" src="data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA="></audio>
+<!-- Sons fiables -->
+<audio id="good" src="https://www.soundjay.com/buttons/sounds/button-09.mp3"></audio>
+<audio id="bad" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
 
 <script>
 
+// 🔊 débloque audio
+document.addEventListener("click", () => {
+    good.play().then(()=>good.pause());
+    bad.play().then(()=>bad.pause());
+}, { once:true });
+
 const questions = [
-{ q:"Guerre ?", a:["14-18","39-45"], correct:1, chiffre:0 },
-{ q:"Réseau ?", a:["Lynx","Robinsons"], correct:0, chiffre:5 },
-{ q:"Lisa ?", a:["Allemande","Alsacienne"], correct:0, chiffre:6 },
-{ q:"Sabotage ?", a:["Canal","Fuite"], correct:0, chiffre:0 },
-{ q:"Enfants ?", a:["François Eusèbe Lisa","Autres"], correct:0, chiffre:0 },
-{ q:"Date appel ?", a:["18 juin","25 juin"], correct:0, chiffre:6 }
+{
+q: "Durant quelle guerre se déroule l’histoire ?",
+a: ["1914-1918", "1939-1945", "2000 - 2003"],
+correct: 1, chiffre: 0
+},
+{
+q: "Quel est le nom du réseau des enfants ?",
+a: ["Le Lynx", "Les Robinsons", "Les Faucons"],
+correct: 0, chiffre: 5
+},
+{
+q: "Quelle est l’origine de Lisa ?",
+a: ["Allemande", "Française", "Belge", "Alsacienne"],
+correct: 0, chiffre: 6
+},
+{
+q: "Quel est le sabotage fait par les enfants ?",
+a: ["Ils taguent les chars", "Ils cassent une canalisation du canal", "Ils fuient"],
+correct: 1, chiffre: 0
+},
+{
+q: "Quels sont les prénoms des enfants ?",
+a: ["Jules, Paul et Marion", "François, Eusèbe et Lisa", "Albert, Georges et Marie"],
+correct: 1, chiffre: 0
+},
+{
+q: "Quelle est la date de l’appel du général de Gaulle ?",
+a: ["18 avril", "18 juin", "25 juin"],
+correct: 1, chiffre: 6
+}
 ];
 
 let i = 0;
 let code = "";
-
-// 🔥 débloque audio (important)
-document.addEventListener("click", () => {
-    document.getElementById("good").play().then(a=>a.pause());
-    document.getElementById("bad").play().then(a=>a.pause());
-}, { once:true });
 
 function loadQuestion(){
     let q = questions[i];
@@ -95,28 +123,47 @@ function answer(idx, el){
     all.forEach(a=>a.style.pointerEvents="none");
 
     if(idx === questions[i].correct){
-        document.getElementById("good").currentTime=0;
-        document.getElementById("good").play();
-        el.style.background="green";
+        good.currentTime = 0;
+        good.play();
+        el.style.background = "#2e5d2e";
         code += questions[i].chiffre;
     } else {
-        document.getElementById("bad").currentTime=0;
-        document.getElementById("bad").play();
-        el.style.background="red";
+        bad.currentTime = 0;
+        bad.play();
+        el.style.background = "#7a2c2c";
         code += "✖";
     }
 
     i++;
 
     setTimeout(()=>{
-        if(i<questions.length){
+        if(i < questions.length){
             loadQuestion();
         } else {
-            document.getElementById("question").innerText="FIN";
-            document.getElementById("answers").innerHTML="";
-            document.getElementById("code").innerText="CODE : "+code;
+
+            document.getElementById("question").innerText = "Mission terminée";
+            document.getElementById("answers").innerHTML = "";
+
+            document.getElementById("code").innerText = "🔐 CODE : " + code;
+
+            if(code.includes("✖")){
+                document.getElementById("code").innerHTML += "<br><br>❌ Recommence";
+            } else {
+                document.getElementById("code").innerHTML += "<br><br>✅ Code validé";
+                confetti({ particleCount: 150, spread: 70 });
+            }
+
+            document.getElementById("answers").innerHTML =
+            '<div class="answer" onclick="restart()">🔁 Recommencer</div>';
         }
     },500);
+}
+
+function restart(){
+    i = 0;
+    code = "";
+    document.getElementById("code").innerText = "";
+    loadQuestion();
 }
 
 loadQuestion();
