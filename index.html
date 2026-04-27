@@ -7,110 +7,142 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
+
 body {
     margin: 0;
     font-family: 'Courier New', monospace;
-    background: url("https://images.unsplash.com/photo-1473445361085-b9a07f55608b") no-repeat center;
-    background-size: cover;
-    color: #f5e6c8;
+    background: url("https://images.unsplash.com/photo-1504608524841-42fe6f032b4b") center/cover;
+    color: #e6d3a3;
 }
 
+/* overlay sombre */
 .overlay {
-    background: rgba(0,0,0,0.85);
     min-height: 100vh;
-    padding: 20px;
+    background: rgba(0,0,0,0.85);
     text-align: center;
+    padding: 20px;
 }
 
-h1 {
-    font-size: 42px;
-    letter-spacing: 4px;
+/* TITRE */
+.title {
+    font-size: 50px;
+    letter-spacing: 6px;
+    margin-top: 10px;
 }
 
 .subtitle {
-    margin-bottom: 20px;
     font-size: 18px;
     opacity: 0.8;
+    margin-bottom: 30px;
 }
 
+/* CARTE PAPIER */
 .card {
-    background: #f5e6c8;
-    color: black;
-    padding: 25px;
-    border-radius: 12px;
-    max-width: 650px;
+    background: #f2e2b8;
+    color: #111;
+    width: 600px;
+    max-width: 90%;
     margin: auto;
-    box-shadow: 0 0 30px black;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 0 40px black;
+    border: 3px solid #3a2e1f;
 }
 
-button {
-    display: block;
-    width: 100%;
+/* QUESTION */
+#question {
+    font-size: 22px;
+}
+
+/* REPONSES STYLE IMAGE */
+.answer {
+    background: #d2b98a;
     margin: 10px 0;
-    padding: 12px;
-    border: none;
-    background: #2e2e2e;
-    color: white;
+    padding: 15px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 16px;
+    border: 2px solid #8b7a4f;
     transition: 0.2s;
 }
 
-button:hover {
-    background: #555;
-    transform: scale(1.02);
+.answer:hover {
+    background: #c4a76f;
 }
 
-#progress {
-    margin: 15px 0;
-    letter-spacing: 5px;
+/* BOUTON SON */
+.sound-btn {
+    margin-top: 15px;
+    padding: 10px;
+    background: #222;
+    color: #e6d3a3;
+    border: none;
+    cursor: pointer;
 }
 
+/* PROGRESSION */
+.progress {
+    margin-top: 20px;
+}
+
+.dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background: #444;
+    border-radius: 50%;
+    margin: 5px;
+}
+
+.active {
+    background: #e6d3a3;
+}
+
+/* CODE */
 #code {
-    font-size: 30px;
-    margin-top: 25px;
+    margin-top: 30px;
+    font-size: 28px;
     letter-spacing: 10px;
 }
 
-.radio {
-    margin-top: 20px;
-    font-size: 14px;
-    opacity: 0.7;
-}
 </style>
 </head>
 
 <body>
 
 <div class="overlay">
-<h1>MISSION RÉSISTANCE</h1>
-<div class="subtitle">Pontain-l'Écluse • 1940</div>
 
-<div id="progress"></div>
+<div class="title">MISSION RÉSISTANCE</div>
+<div class="subtitle">Pontain-l'Écluse • 1940</div>
 
 <div class="card">
     <h2 id="question"></h2>
     <div id="answers"></div>
+
+    <button class="sound-btn" onclick="playSound()">🔊 Écouter la question</button>
 </div>
+
+<div class="progress" id="progress"></div>
 
 <div id="code"></div>
 
-<div class="radio">📻 Radio Londres — écoutez attentivement…</div>
-
 </div>
 
-<!-- Sons -->
+<!-- sons -->
 <audio id="bg" src="https://upload.wikimedia.org/wikipedia/commons/4/45/BBC_radio_tuning_signal.ogg" loop></audio>
 <audio id="good" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
 <audio id="bad" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
-<audio id="type" src="https://www.soundjay.com/mechanical/sounds/typewriter-key-1.mp3"></audio>
 
 <script>
 
-// musique
 document.body.addEventListener("click", () => {
-    document.getElementById("bg").play();
+    let bg = document.getElementById("bg");
+    bg.volume = 0.2;
+    bg.play().catch(()=>{});
 }, { once: true });
+
+function playSound(){
+    alert("🎧 Imagine une voix radio ici");
+}
 
 const questions = [
 {
@@ -129,13 +161,13 @@ a: ["Allemande", "Française", "Belge", "Alsacienne"],
 correct: 0, chiffre: 6
 },
 {
-q: "QUel est le sabotage fait par les enfants ?",
-a: ["ils taguent les chars", "casse une canalisation sur le canal", "ils"],
+q: "Quel est le sabotage fait par les enfants ?",
+a: ["Ils taguent les chars", "Ils cassent une canalisation du canal", "Ils fuient"],
 correct: 1, chiffre: 0
 },
 {
-q: " Quels sont les prénoms de enfants ?",
-a: ["jules, paul et marion", "François, Eusèbe et Lisa", "Albert, georges et marie"],
+q: "Quels sont les prénoms des enfants ?",
+a: ["Jules, Paul et Marion", "François, Eusèbe et Lisa", "Albert, Georges et Marie"],
 correct: 1, chiffre: 0
 },
 {
@@ -148,44 +180,76 @@ correct: 1, chiffre: 6
 let i = 0;
 let code = "";
 
-function typeEffect(text, element){
-    let index = 0;
-    element.innerHTML = "";
-    let interval = setInterval(()=>{
-        document.getElementById("type").play();
-        element.innerHTML += text[index];
-        index++;
-        if(index >= text.length) clearInterval(interval);
-    }, 20);
+function updateProgress(){
+    let html = "";
+    for(let j=0;j<questions.length;j++){
+        html += `<span class="dot ${j < i ? 'active' : ''}"></span>`;
+    }
+    document.getElementById("progress").innerHTML = html;
 }
 
-function loadQuestion() {
+function loadQuestion(){
     let q = questions[i];
-
-    document.getElementById("progress").innerText =
-        "●".repeat(i) + "○".repeat(questions.length - i);
-
-    typeEffect(q.q, document.getElementById("question"));
+    document.getElementById("question").innerText = q.q;
 
     let html = "";
     q.a.forEach((rep, index)=>{
-        html += `<button onclick="answer(${index})">${rep}</button>`;
+        html += `<div class="answer" onclick="answer(${index}, this)">${rep}</div>`;
     });
 
     document.getElementById("answers").innerHTML = html;
+    updateProgress();
 }
 
-function answer(index) {
+function answer(index, el){
+
+    let all = document.querySelectorAll(".answer");
+    all.forEach(a => a.style.pointerEvents = "none");
+
     if(index === questions[i].correct){
-        document.getElementById("good").play();
+        good.play();
+        el.style.background = "#3e5f3e";
         code += questions[i].chiffre;
     } else {
-        document.getElementById("bad").play();
-        code += "X";
+        bad.play();
+        el.style.background = "#7a2c2c";
+        code += "✖";
     }
 
     i++;
 
-    if(i < questions.length){
-        setTimeout(loadQuestion, 500);
-    }
+    setTimeout(()=>{
+        if(i < questions.length){
+            loadQuestion();
+        } else {
+            document.getElementById("question").innerText = "Mission terminée";
+            document.getElementById("answers").innerHTML = "";
+
+            document.getElementById("code").innerText = "🔐 CODE : " + code;
+
+            if(code.includes("✖")){
+                document.getElementById("code").innerHTML += "<br>❌ Recommence";
+            } else {
+                document.getElementById("code").innerHTML += "<br>✅ Validé";
+                confetti({ particleCount: 150, spread: 70 });
+            }
+
+            document.getElementById("answers").innerHTML =
+            '<button onclick="restart()">Recommencer</button>';
+        }
+    },600);
+}
+
+function restart(){
+    i = 0;
+    code = "";
+    document.getElementById("code").innerText = "";
+    loadQuestion();
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
