@@ -7,7 +7,6 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
-
 body {
     margin: 0;
     font-family: 'Courier New', monospace;
@@ -15,7 +14,6 @@ body {
     color: #e6d3a3;
 }
 
-/* overlay sombre */
 .overlay {
     min-height: 100vh;
     background: rgba(0,0,0,0.85);
@@ -23,20 +21,16 @@ body {
     padding: 20px;
 }
 
-/* TITRE */
 .title {
     font-size: 50px;
     letter-spacing: 6px;
-    margin-top: 10px;
 }
 
 .subtitle {
-    font-size: 18px;
     opacity: 0.8;
     margin-bottom: 30px;
 }
 
-/* CARTE PAPIER */
 .card {
     background: #f2e2b8;
     color: #111;
@@ -45,16 +39,10 @@ body {
     margin: auto;
     padding: 25px;
     border-radius: 8px;
-    box-shadow: 0 0 40px black;
     border: 3px solid #3a2e1f;
+    box-shadow: 0 0 40px black;
 }
 
-/* QUESTION */
-#question {
-    font-size: 22px;
-}
-
-/* REPONSES STYLE IMAGE */
 .answer {
     background: #d2b98a;
     margin: 10px 0;
@@ -69,27 +57,16 @@ body {
     background: #c4a76f;
 }
 
-/* BOUTON SON */
-.sound-btn {
-    margin-top: 15px;
-    padding: 10px;
-    background: #222;
-    color: #e6d3a3;
-    border: none;
-    cursor: pointer;
-}
-
-/* PROGRESSION */
 .progress {
     margin-top: 20px;
 }
 
 .dot {
-    display: inline-block;
     width: 12px;
     height: 12px;
     background: #444;
     border-radius: 50%;
+    display: inline-block;
     margin: 5px;
 }
 
@@ -97,13 +74,11 @@ body {
     background: #e6d3a3;
 }
 
-/* CODE */
 #code {
     margin-top: 30px;
     font-size: 28px;
     letter-spacing: 10px;
 }
-
 </style>
 </head>
 
@@ -117,32 +92,26 @@ body {
 <div class="card">
     <h2 id="question"></h2>
     <div id="answers"></div>
-
-    <button class="sound-btn" onclick="playSound()">🔊 Écouter la question</button>
 </div>
 
 <div class="progress" id="progress"></div>
-
 <div id="code"></div>
 
 </div>
 
-<!-- sons -->
+<!-- Sons -->
 <audio id="bg" src="https://upload.wikimedia.org/wikipedia/commons/4/45/BBC_radio_tuning_signal.ogg" loop></audio>
 <audio id="good" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
 <audio id="bad" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
 
 <script>
 
+// ambiance sonore (radio guerre)
 document.body.addEventListener("click", () => {
     let bg = document.getElementById("bg");
-    bg.volume = 0.2;
+    bg.volume = 0.25;
     bg.play().catch(()=>{});
 }, { once: true });
-
-function playSound(){
-    alert("🎧 Imagine une voix radio ici");
-}
 
 const questions = [
 {
@@ -222,20 +191,21 @@ function answer(index, el){
         if(i < questions.length){
             loadQuestion();
         } else {
+
             document.getElementById("question").innerText = "Mission terminée";
             document.getElementById("answers").innerHTML = "";
 
             document.getElementById("code").innerText = "🔐 CODE : " + code;
 
             if(code.includes("✖")){
-                document.getElementById("code").innerHTML += "<br>❌ Recommence";
+                document.getElementById("code").innerHTML += "<br>❌ Recommence la mission";
             } else {
-                document.getElementById("code").innerHTML += "<br>✅ Validé";
+                document.getElementById("code").innerHTML += "<br>✅ Code validé";
                 confetti({ particleCount: 150, spread: 70 });
             }
 
             document.getElementById("answers").innerHTML =
-            '<button onclick="restart()">Recommencer</button>';
+            '<button onclick="restart()">🔁 Recommencer</button>';
         }
     },600);
 }
