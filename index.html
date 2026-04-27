@@ -8,65 +8,90 @@
 
 <style>
 body {
-    font-family: Arial;
-    background: url('https://images.unsplash.com/photo-1549887534-3dbd5a6c8f9b') no-repeat center;
+    margin: 0;
+    font-family: 'Courier New', monospace;
+    background: url("https://images.unsplash.com/photo-1529156069898-49953e39b3ac") no-repeat center;
     background-size: cover;
-    color: white;
-    text-align: center;
-    padding: 20px;
+    color: #f5e6c8;
 }
-.container {
-    max-width: 700px;
-    margin: auto;
+
+.overlay {
     background: rgba(0,0,0,0.8);
+    min-height: 100vh;
     padding: 20px;
-    border-radius: 10px;
+    text-align: center;
 }
+
+h1 {
+    font-size: 42px;
+    letter-spacing: 3px;
+}
+
+.card {
+    background: #f5e6c8;
+    color: black;
+    padding: 25px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: auto;
+    box-shadow: 0 0 25px black;
+}
+
 button {
     display: block;
-    margin: 10px auto;
+    width: 100%;
+    margin: 10px 0;
     padding: 12px;
+    border: none;
     background: #333;
     color: white;
-    border: none;
     cursor: pointer;
-    width: 80%;
+    font-size: 16px;
 }
+
 button:hover {
     background: #555;
 }
-#result {
-    font-size: 24px;
+
+#code {
+    font-size: 28px;
     margin-top: 20px;
+    letter-spacing: 6px;
 }
 </style>
+
 </head>
 
 <body>
 
-<div class="container">
-<h1>🕵️ Mission Résistance</h1>
-<p>Réponds correctement pour obtenir le code secret.</p>
+<div class="overlay">
+<h1>🕵️ MISSION RÉSISTANCE</h1>
+<p>Pontain-l'Écluse • 1940</p>
 
-<div id="quiz"></div>
-<div id="result"></div>
+<div class="card">
+    <h2 id="question"></h2>
+    <div id="answers"></div>
+</div>
+
+<div id="code"></div>
 </div>
 
 <!-- Sons -->
-<audio id="goodSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
-<audio id="badSound" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
-<audio id="bgMusic" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" loop></audio>
+<audio id="bg" src="https://upload.wikimedia.org/wikipedia/commons/4/45/BBC_radio_tuning_signal.ogg" loop></audio>
+<audio id="good" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+<audio id="bad" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
 
 <script>
 
+// démarrage musique
 document.body.addEventListener("click", () => {
-    document.getElementById("bgMusic").play();
+    document.getElementById("bg").play();
 }, { once: true });
 
 const questions = [
 {
 q: "Durant quelle guerre se déroule l’histoire ?",
-a: ["1914-1918", "1939-1945", "Moyen Âge"],
+a: ["1914-1918", "1939-1945", "2000 - 2003"],
 correct: 1, chiffre: 0
 },
 {
@@ -75,22 +100,22 @@ a: ["Le Lynx", "Les Robinsons", "Les Faucons"],
 correct: 0, chiffre: 5
 },
 {
-q: "Prénom de la fille ?",
-a: ["Marie", "Lisa", "Jeanne"],
-correct: 1, chiffre: 6
+q: "Quelle est l’origine de Lisa ?",
+a: ["Allemande", "Française", "Belge", "Alsacienne"],
+correct: 0, chiffre: 6
 },
 {
-q: "Changement après sabotage ?",
-a: ["Ils se révoltent", "Regards pleins de colère", "Ils fuient"],
+q: "QUel est le sabotage fait par les enfants ?",
+a: ["ils taguent les chars", "casse une canalisation sur le canal", "ils"],
 correct: 1, chiffre: 0
 },
 {
-q: "Sur quoi a lieu le peremier sabotage des enfants ?",
-a: ["une Péniche", "une canalisation", " une Fonderie"],
+q: " Quels sont les prénoms de enfants ?",
+a: ["jules, paul et marion", "François, Eusèbe et Lisa", "Albert, georges et marie"],
 correct: 1, chiffre: 0
 },
 {
-q: "Quelle est la date de l'appel de Gaulle ?",
+q: "Quelle est la date de l’appel du général de Gaulle ?",
 a: ["18 avril", "18 juin", "25 juin"],
 correct: 1, chiffre: 6
 }
@@ -99,32 +124,35 @@ correct: 1, chiffre: 6
 let i = 0;
 let code = "";
 
-function showQ(){
+function loadQuestion() {
     let q = questions[i];
-    let html = "<h2>"+q.q+"</h2>";
+    document.getElementById("question").innerText = q.q;
+
+    let html = "";
     q.a.forEach((rep, index)=>{
         html += `<button onclick="answer(${index})">${rep}</button>`;
     });
-    document.getElementById("quiz").innerHTML = html;
+
+    document.getElementById("answers").innerHTML = html;
 }
 
-function answer(index){
+function answer(index) {
     if(index === questions[i].correct){
-        document.getElementById("goodSound").play();
+        document.getElementById("good").play();
         code += questions[i].chiffre;
     } else {
-        document.getElementById("badSound").play();
+        document.getElementById("bad").play();
         code += "X";
     }
 
     i++;
 
     if(i < questions.length){
-        setTimeout(showQ, 500);
+        setTimeout(loadQuestion, 400);
     } else {
-        document.getElementById("quiz").innerHTML = "";
-        document.getElementById("result").innerHTML =
-        "🔐 Code : " + code;
+        document.getElementById("question").innerText = "Mission réussie";
+        document.getElementById("answers").innerHTML = "";
+        document.getElementById("code").innerText = "🔐 CODE : " + code;
 
         confetti({
             particleCount: 150,
@@ -133,7 +161,7 @@ function answer(index){
     }
 }
 
-showQ();
+loadQuestion();
 
 </script>
 
