@@ -10,13 +10,13 @@
 body {
     margin: 0;
     font-family: 'Courier New', monospace;
-    background: url("https://images.unsplash.com/photo-1529156069898-49953e39b3ac") no-repeat center;
+    background: url("https://images.unsplash.com/photo-1473445361085-b9a07f55608b") no-repeat center;
     background-size: cover;
     color: #f5e6c8;
 }
 
 .overlay {
-    background: rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.85);
     min-height: 100vh;
     padding: 20px;
     text-align: center;
@@ -24,17 +24,23 @@ body {
 
 h1 {
     font-size: 42px;
-    letter-spacing: 3px;
+    letter-spacing: 4px;
+}
+
+.subtitle {
+    margin-bottom: 20px;
+    font-size: 18px;
+    opacity: 0.8;
 }
 
 .card {
     background: #f5e6c8;
     color: black;
     padding: 25px;
-    border-radius: 10px;
-    max-width: 600px;
+    border-radius: 12px;
+    max-width: 650px;
     margin: auto;
-    box-shadow: 0 0 25px black;
+    box-shadow: 0 0 30px black;
 }
 
 button {
@@ -43,30 +49,44 @@ button {
     margin: 10px 0;
     padding: 12px;
     border: none;
-    background: #333;
+    background: #2e2e2e;
     color: white;
     cursor: pointer;
     font-size: 16px;
+    transition: 0.2s;
 }
 
 button:hover {
     background: #555;
+    transform: scale(1.02);
+}
+
+#progress {
+    margin: 15px 0;
+    letter-spacing: 5px;
 }
 
 #code {
-    font-size: 28px;
+    font-size: 30px;
+    margin-top: 25px;
+    letter-spacing: 10px;
+}
+
+.radio {
     margin-top: 20px;
-    letter-spacing: 6px;
+    font-size: 14px;
+    opacity: 0.7;
 }
 </style>
-
 </head>
 
 <body>
 
 <div class="overlay">
-<h1>🕵️ MISSION RÉSISTANCE</h1>
-<p>Pontain-l'Écluse • 1940</p>
+<h1>MISSION RÉSISTANCE</h1>
+<div class="subtitle">Pontain-l'Écluse • 1940</div>
+
+<div id="progress"></div>
 
 <div class="card">
     <h2 id="question"></h2>
@@ -74,16 +94,20 @@ button:hover {
 </div>
 
 <div id="code"></div>
+
+<div class="radio">📻 Radio Londres — écoutez attentivement…</div>
+
 </div>
 
 <!-- Sons -->
 <audio id="bg" src="https://upload.wikimedia.org/wikipedia/commons/4/45/BBC_radio_tuning_signal.ogg" loop></audio>
 <audio id="good" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
 <audio id="bad" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
+<audio id="type" src="https://www.soundjay.com/mechanical/sounds/typewriter-key-1.mp3"></audio>
 
 <script>
 
-// démarrage musique
+// musique
 document.body.addEventListener("click", () => {
     document.getElementById("bg").play();
 }, { once: true });
@@ -124,9 +148,24 @@ correct: 1, chiffre: 6
 let i = 0;
 let code = "";
 
+function typeEffect(text, element){
+    let index = 0;
+    element.innerHTML = "";
+    let interval = setInterval(()=>{
+        document.getElementById("type").play();
+        element.innerHTML += text[index];
+        index++;
+        if(index >= text.length) clearInterval(interval);
+    }, 20);
+}
+
 function loadQuestion() {
     let q = questions[i];
-    document.getElementById("question").innerText = q.q;
+
+    document.getElementById("progress").innerText =
+        "●".repeat(i) + "○".repeat(questions.length - i);
+
+    typeEffect(q.q, document.getElementById("question"));
 
     let html = "";
     q.a.forEach((rep, index)=>{
@@ -148,22 +187,5 @@ function answer(index) {
     i++;
 
     if(i < questions.length){
-        setTimeout(loadQuestion, 400);
-    } else {
-        document.getElementById("question").innerText = "Mission réussie";
-        document.getElementById("answers").innerHTML = "";
-        document.getElementById("code").innerText = "🔐 CODE : " + code;
-
-        confetti({
-            particleCount: 150,
-            spread: 70
-        });
+        setTimeout(loadQuestion, 500);
     }
-}
-
-loadQuestion();
-
-</script>
-
-</body>
-</html>
